@@ -1,0 +1,38 @@
+//datetime
+var today = new Date();
+var dd = today.getDate().toString().padStart(2,0);
+var MM = (today.getMonth() + 1).toString().padStart(2,0); // month value starts from 0 to 11
+var yyyy = today.getFullYear().toString();
+var hh = today.getHours().toString().padStart(2,0);
+var mm = today.getMinutes().toString().padStart(2,0);
+var ss = today.getSeconds().toString().padStart(2,0);
+//yyyy-MM-dd'T'HH:mm:ss.SSSXXX
+//
+var transactionDate =new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString();
+//yyyy-MM-dd'T'HH:mm:ss.SSSXXX
+var transTime = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString();
+pm.variables.set("transTime", transTime);
+pm.variables.set("transactionDate", transactionDate);
+console.log("transactionDate: "+ transactionDate);
+
+var requestId = new Date().getTime() + '';
+var transactionNo = new Date().getTime() + '';
+
+pm.variables.set("requestId", requestId);
+pm.variables.set("transactionNo", transactionNo);
+
+//hash
+var key = '5F5AF776AFB6FB6DB391D079A4C07C4028DADE03B0E0BF8CBFF06ECC21A59FE6';
+var requestBody = JSON.parse(pm.request.body);
+console.log(requestBody)
+console.log(requestBody.eventType)
+
+var providerId = requestBody.providerId;
+var createdDate = transTime;
+var payload = requestId + '|' + transactionNo + '|' + providerId + '|' + createdDate + '|'+ transactionDate + '|' + key;
+console.log(payload)
+var signature = CryptoJS.SHA256(payload);
+var partnerSigned = signature.toString(CryptoJS.enc.Base64);
+console.log(partnerSigned);
+console.log(signature.toString());
+pm.variables.set("partnerSigned", signature.toString());
